@@ -16,7 +16,7 @@ class MultiSiteExtension < Radiant::Extension
     Admin::PagesController.send :include, MultiSite::PagesControllerExtensions
     admin.pages.index.add :bottom, "site_subnav"
     tab 'Settings' do |tab|
-      tab.add_item t('sites'), '/admin/sites'
+      tab.add_item I18n.t('multi_sites.sites'), '/admin/sites'
     end
     load_default_regions
   end
@@ -38,6 +38,6 @@ class MultiSiteExtension < Radiant::Extension
       end
       sites.new = sites.edit
     end
-  end
 
+  end
 end
