@@ -1,22 +1,12 @@
 require_dependency 'application_controller'
 
 class MultiSiteExtension < Radiant::Extension
-  version "0.9.0"
+  version "1.0.0.rc2"
   description %{ Enables virtual sites to be created with associated domain names.
                  Also scopes the sitemap view to any given page (or the root of an
                  individual site). }
   url "http://radiantcms.org/"
 
-  define_routes do |map|
-    map.namespace :admin, :member => { :remove => :get } do |admin|
-      admin.resources :sites, :member => {
-        :move_higher => :post,
-        :move_lower => :post,
-        :move_to_top => :put,
-        :move_to_bottom => :put
-      }
-    end
-  end
 
   def activate
     require 'multi_site/route_extensions'
@@ -26,7 +16,7 @@ class MultiSiteExtension < Radiant::Extension
     Admin::PagesController.send :include, MultiSite::PagesControllerExtensions
     admin.pages.index.add :bottom, "site_subnav"
     tab 'Settings' do |tab|
-      tab.add_item 'Sites', '/admin/sites'
+      tab.add_item t('sites'), '/admin/sites'
     end
     load_default_regions
   end
@@ -36,7 +26,7 @@ class MultiSiteExtension < Radiant::Extension
 
   def load_default_regions
     Radiant::AdminUI.class_eval { attr_accessor :sites }
-    admin.sites = returning OpenStruct.new do |sites|
+    admin.sites = OpenStruct.new.tap do |sites|
       sites.index = Radiant::AdminUI::RegionSet.new do |index|
         index.header.concat %w{name_th match_th base_th modify_th order_th}
         index.row.concat %w{name_td match_td base_td modify_td order_td}
